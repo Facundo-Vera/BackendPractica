@@ -70,6 +70,24 @@ const updateOneTask = async (req, res) => {
     }
 };
 
-const deleteOneTask = async (req, res) => {};
+const deleteOneTask = async (req, res) => {
+  try {
+     const {id} = req.params
+     const deletetask = await Task.findByIdAndDelete(id);
+     
+     return res.status(200).json({
+      ok:true,
+      message: "Tarea eliminada correctamente",
+      data: deletetask
+
+     })
+  } catch (error) {
+    console.log(error)
+       return re.status(500).json({
+      ok: false,
+      message: error.message,
+    });
+  }
+};
 
 export { getTask, createOneTask, updateOneTask, deleteOneTask };

@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --env-file=.env --watch src/app"
-
+    "dev": "nodemon --env-file=.env  src/app"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +13,9 @@
   "type": "module",
   "dependencies": {
     "express": "^5.2.1",
-    "mongoose": "^9.1.2"
+    "express-validator": "^7.3.1",
+    "mongoose": "^9.1.2",
+    "morgan": "^1.10.1",
+    "nodemon": "^3.1.11"
   }
 }
