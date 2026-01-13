@@ -1,21 +1,13 @@
-import express from "express";
-import morgan from "morgan"
-import { dbConnect } from "./config/db.js";
-import taskRoutes from "./routes/taskRoutes.js";
+import { Router } from "express";
 
-const app= express();
-const PORT = process.env.PORT;
+const router =Router();
 
+// Llega con /auth
 
-//!Middlewares
-app.use(express.json()); //&entiende el formato json 
-app.use (express.urlencoded({extended:true})) //&puede recibir info en formato json de un formulario 
-app.use(morgan(`dev`));
+router.post('/register')
+router.post('/login')
+router.post('/verify-email')
+router.post('/logout')
+router.get('/profile') 
 
-//!Rutas
-app.use("/api/tasks", taskRoutes);
-
-
-await dbConnect();
-
-app.listen(PORT, () => console.log("Servidor en línea en puerto: " + PORT));
+export default router;
