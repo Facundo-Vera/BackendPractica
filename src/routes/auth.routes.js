@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { validateLoginUser, validateRegisterUser } from "../middlewares/validator";
+import { validateLoginUser, validateRegisterUser, validationCodeEmail } from "../middlewares/validator.js";
 
 
 

@@ -1,13 +1,21 @@
-import { Router } from "express";
+import express from "express";
+import morgan from "morgan";
+import { dbConnect } from "./config/db.js";
+import authRoutes from "./routes/auth.routes.js";
+const app = express();
+const PORT = process.env.PORT; //Esta en la manera de acceder a las variables de entorno y setearlas en una variable
 
-const router =Router();
 
-// Llega con /auth
+//Middlewares
+app.use(express.json()); // explico a mi app que entienda el formato json (parsear)
+app.use(express.urlencoded({extended:true})) // explicarle a la app que pueda recibir info en formato json de un formulario
+app.use(morgan('dev')); // capturo todos los logs de la app y muestra por consola
 
-router.post('/register')
-router.post('/login')
-router.post('/verify-email')
-router.post('/logout')
-router.get('/profile') 
+//Rutas
+app.use("/api/auth", authRoutes);
 
-export default router;
+
+//Conexión Base de datos
+await dbConnect();
+
+app.listen(PORT, () => console.log("🚀 Servidor en línea en puerto: " + PORT));
