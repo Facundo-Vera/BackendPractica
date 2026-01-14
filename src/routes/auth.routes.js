@@ -1,13 +1,18 @@
 import { Router } from "express";
-import { createOneTask, deleteOneTask, getTask, updateOneTask } from "../controllers/task.controller.js";
-import { validateCreateTask, validateUpdateTask , validateDeleteTask } from "../middlewares/validator.js";
+import { validateLoginUser, validateRegisterUser } from "../middlewares/validator";
+
 
 
 const router = Router();
 
-router.get ("/",getTask)
-router.post ("/createTask", validateCreateTask ,createOneTask)
-router.put ("/updateTask/:id", validateUpdateTask ,updateOneTask) //?ruta con parametro 
-router.delete ("/deleteTask/:id", validateDeleteTask ,deleteOneTask)
+
+// Llega con /auth
+
+ router.post('/register',validateRegisterUser)
+router.post('/login',validateLoginUser)
+router.post('/verify-email',validationCodeEmail)
+router.post('/logout')
+router.get('/profile') 
+
 
 export default router;

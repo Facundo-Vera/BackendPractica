@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-const UserSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique:true, // índice único
-    trim:true
-  },
-  email:{
+const UserSchema = new mongoose.Schema(
+  {
+    username:{
+      type: String,
+      required: true,
+      unique: true,
+      trim: true
+    },
+    email:{
       type: String,
       required: true,
       unique: true,
@@ -33,23 +34,22 @@ const UserSchema = new mongoose.Schema({
     },
     verificationCodeExpires:{
       type: Date,
-    }
+    },
+  },
+  {
+    timestamps: true,
+  }
+)
 
-});
-
-
-//*Encriptación de la contraseña
-
-//hashear la contraseña antes de guardarla
+// Encriptación de la contraseña
 UserSchema.pre('save', async function(){
     if(!this.isModified('password')){
       return
     }
 
-    const salt = await bcrypt.genSalt(10); 
-    this.password = await bcrypt.hash(this.password, salt) 
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt)
 });
-
 
 // Generamos el codigo de verificacion de 6 digitos
 UserSchema.methods.generateVerificationCode = function(){
@@ -65,6 +65,7 @@ UserSchema.methods.generateVerificationCode = function(){
 UserSchema.methods.comparePassword = async function(userPassword){
   return await bcrypt.compare(userPassword, this.password) // Devuelve un booleano.
 };
+
 
 const User = mongoose.model('User', UserSchema);
 

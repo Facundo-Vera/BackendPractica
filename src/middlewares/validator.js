@@ -1,74 +1,89 @@
-//?check me permite acceder a los campos que quiero validar
-//?los errores se va a ir sumando a un array para mandarlo en la respuesta
 import { check, validationResult } from "express-validator";
-// import Task from "../models/tasks.js";
+import User from "../models/User.js";
 
-//*Funcion que meneja el resultado de las validaciones
-
+//armar una función que maneje el resultado de las validaciones
 const handleValidationErrors = (req, res, next) => {
-  //voy a preguntarme si hay errores
+  // Voy a preguntarme si NO hay errores
 
-  const errors = validationResult(req); //?atraopa errores
-
+  const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    //si hay errores los mando en la respuesta al cliente
+    // Si hay errores los mando en la respuesta al cliente
     return res.status(400).json({
       ok: false,
-      errors: errors.mapped()
+      errors: errors.mapped(),
     });
   }
-
-  //si no hay errores entoces indico que el flujo continue al controlador
-
+  // Si no hay errores entonces indico que el flujo continue al controlador
   next();
 };
 
-//*Validacion para crear una tarea
+//!Funciones de validación
 
-const validateCreateTask = [
-  check("title")
-    .notEmpty()
-    .withMessage("El titulo es obligatorio") //~valido que el titulo no puede estar vacio
-    .isString()
-    .withMessage("El campo tiene que se un string")
-    .isLength({ min: 5, max: 50 })
-    .withMessage("El titulo debe tener entre 5 y 50 caracteres"), //~minimo de caracteres y maximo
+const validateEmailNotExists = async (email) => {
+  const userByEmail = await User.findOne({ email }); //Busca un usuario cuyo campo email coincida con el email recibido
+  if (userByEmail) {
+    throw new Error("El correo electrónico ya está registrado.");
+  }
+};
 
-  check("description")
+
+//^ 1 - Validación de registro
+
+const validateRegisterUser = [
+  check("username")
     .notEmpty()
-    .withMessage("El titulo es obligatorio")
+    .withMessage("El campo es obligatorio")
     .isString()
-    .withMessage("El campo tiene que se un string")
-    .isLength({ min: 5, max: 500 })
-    .withMessage("La descripcion debe tener entre 5 y 500 caracteres"),
-    handleValidationErrors //&si hay algun error se ejecuta la funcion y manda los errores al cliente
+    .withMessage("El campo tiene que ser un string")
+    .isLength({ min: 1, max: 30 })
+    .withMessage("El nombre debe tener entre 1 y 30 caracteres"),
+
+  check("email")
+    .notEmpty()
+    .withMessage("El campo es obligatorio")
+    .isEmail()
+    .withMessage("Ingresá un correo electrónico válido.")
+    .custom(validateEmailNotExists),
+
+  check("password")
+    .notEmpty()
+    .withMessage("La contraseña es obligatoria")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/)
+    .withMessage(
+      "Debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número"
+    ),
+  handleValidationErrors,
 ];
 
-const validateTaskById = async (value) =>{
-    const taskById = await Task.findById(value)
-   if (!taskById){
-    throw new Error("La tarea no existe ") //?arroja un nuevo error al array de errores
-   } 
-}
+//^ 2 - Validación de Login
 
+const validateLoginUser = [
+  check("email")
+    .notEmpty()
+    .withMessage("El campo es obligatorio")
+    .isEmail()
+    .withMessage("Ingresá un correo electrónico válido."),
 
-const validateUpdateTask= [
-     
-    check("id")
-    .isMongoId().withMessage("Envia un ID valido")
+  check("password")
+    .notEmpty()
+    .withMessage("La contraseña es obligatoria")
+    .isString()
+    .withMessage("El campo tiene que ser un string"),
+  handleValidationErrors,
+];
+
+//^ 3 - Validación del código de verificación
+
+const validationCodeEmail = [
+  check("verificationCode")
+    .notEmpty()
+    .withMessage("El código de verificación es obligatorio.")
+    .isString()
+    .withMessage("El campo tiene que ser un string")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("El código de verificación no es válido debe tener 6 caracteres .")
     
-    .custom(validateTaskById)
-    ,
+    //!usar custom para crear una funcion que valide si el codigo expiro o no es valido 
+];
 
-    handleValidationErrors
-]
-
-const validateDeleteTask =[
-    check("id")
-    .isMongoId().withMessage("Envia un ID valido")
-     .custom(validateTaskById)
-    ,
-    handleValidationErrors
-]
-
-export { validateCreateTask , validateUpdateTask,validateDeleteTask};
+export { handleValidationErrors, validateRegisterUser, validateLoginUser ,validationCodeEmail};
