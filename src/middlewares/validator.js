@@ -57,18 +57,26 @@ const validateRegisterUser = [
 
 //^ 2 - Validación de Login
 
-const validateLoginUser = [
+
+ const validateLoginUser = [
   check("email")
     .notEmpty()
     .withMessage("El campo es obligatorio")
     .isEmail()
-    .withMessage("Ingresá un correo electrónico válido."),
+    .withMessage("Ingresá un correo electrónico válido.")
+    .custom(async (email) => {
+      const user = await User.findOne({ email });
+      if (user?.emailVerified) {
+        throw new Error("El usuario ya está verificado");
+      }
+    }),
 
   check("password")
     .notEmpty()
     .withMessage("La contraseña es obligatoria")
     .isString()
     .withMessage("El campo tiene que ser un string"),
+
   handleValidationErrors,
 ];
 
@@ -83,7 +91,6 @@ const validationCodeEmail = [
     .isLength({ min: 6, max: 6 })
     .withMessage("El código de verificación no es válido debe tener 6 caracteres .")
     
-    //!usar custom para crear una funcion que valide si el codigo expiro o no es valido 
 ];
 
 export { handleValidationErrors, validateRegisterUser, validateLoginUser ,validationCodeEmail};
