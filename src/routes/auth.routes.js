@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { validateLoginUser, validateRegisterUser, validationCodeEmail, } from "../middlewares/validator.js";
+import { login, register } from "../controllers/auth.controller.js";
 
 
 
@@ -10,9 +11,9 @@ const router = Router();
 
 //! RUTAS PUBLICAS
 
-router.post('/register',validateRegisterUser)
-router.post('/login',validateLoginUser)
-router.post('/verify-email',validationCodeEmail)
+router.post('/register',validateRegisterUser(),register)
+router.post('/login',validateLoginUser(),login)
+router.post('/verify-email',validationCodeEmail())
 
 
 //! RUTAS PRIVADAS
