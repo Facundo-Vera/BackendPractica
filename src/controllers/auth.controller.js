@@ -105,8 +105,63 @@ const login = async (req,res) => {
 
 
 // El controlador para verificar el email
+const verifyEmail = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+    //buscar a ese usuario
+    const user = await User.findOne({ email });
 
+    if (!user) {
+      return res.status(404).json({
+        ok: false,
+        message: "Usuario no encontrado",
+      });
+    }
+
+    //verificar que el código coincida
+    if (user.verificationCode !== code) {
+      return res.status(400).json({
+        ok: false,
+        message: "Código de verificación incorrecto",
+      });
+    }
+
+    //verificar que el usuario no esté ya validado
+    if (user.emailVerified) {
+      return res.status(400).json({
+        ok: false,
+        message: "El usuario ya está verificado",
+      });
+    }
+
+    //verificar que el código no haya expirado
+    if (user.verificationCodeExpires < Date.now()) {
+      return res.status(400).json({
+        ok: false,
+        message: "El código de verificación ya expiró",
+      });
+    }
+
+    //Marcar el email como verificado y limpiar el código
+    user.emailVerified = true;
+    user.verificationCode = null;
+    user.verificationCodeExpires = null;
+
+    await user.save();
+
+    return res.status(200).json({
+      ok: true,
+      message: "Email verificado correctamente",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      error: error.message,
+    });
+  }
+};
 // El controlador para hacer logout
 
 // El controlador con el perfil del usuario
-export { register , login };
+export { register , login ,verifyEmail};
