@@ -1,8 +1,9 @@
+import { Router } from "express";
 import { sendVerificationEmail } from "../config/nodemailer.js";
 import User from "../models/User.js";
 import { generateToken } from '../utils/jwt.js';
 
-// El controlador para el registro
+//^ El controlador para el registro
 const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -48,7 +49,7 @@ const register = async (req, res) => {
 };
 
 
-// EL controlador para el Login
+//^ EL controlador para el Login
 
 const login = async (req,res) => {
     try {
@@ -104,7 +105,7 @@ const login = async (req,res) => {
 }
 
 
-// El controlador para verificar el email
+//^ El controlador para verificar el email
 const verifyEmail = async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -161,7 +162,41 @@ const verifyEmail = async (req, res) => {
     });
   }
 };
-// El controlador para hacer logout
 
-// El controlador con el perfil del usuario
-export { register , login ,verifyEmail};
+//^ El controlador para hacer logout
+
+ const logout = async (req,res) =>{
+
+  //Chequear que exista el token de sesion 
+
+  //Limpiamos la cookie llamda token
+  res.clearCookie({
+    httpOnly:true,
+    secure:true,
+    sameSite:"lax"
+  });
+
+   return res.status(200).json({
+    ok:true,
+    message:"Sesion cerrada exitosamente"
+   });
+ }
+
+//^ El controlador con el perfil del usuario
+const profile = async (req,res) =>{
+  try {
+    const {username,email,role} = req.user
+    res.json({
+      succes:true,
+      data:{
+      username,email,role
+    }
+  })
+  } catch (error) {
+    return res.status(500).json({
+      ok:false,
+      error:error.message
+    })
+  }
+}
+export { register , login ,verifyEmail,logout,profile};
