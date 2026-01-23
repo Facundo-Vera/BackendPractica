@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import { dbConnect } from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
+import categoryRoutes from "./routes/category.routes.js"
 import cookieParser from "cookie-parser";
 const app = express();
 const PORT = process.env.PORT; //Esta en la manera de acceder a las variables de entorno y setearlas en una variable
@@ -15,6 +16,7 @@ app.use(cookieParser()) // le explico a express que use cookieparser para poder 
 
 //Rutas
 app.use("/api/auth", authRoutes);
+app.use("/api/category", categoryRoutes);
 
 
 //Conexión Base de datos

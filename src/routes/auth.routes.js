@@ -18,7 +18,7 @@ router.post('/verify-email',validationCodeEmail(),verifyEmail)
 
 //! RUTAS PRIVADAS
 
-router.post('/logout' ,logout)
+router.post('/logout' ,authenticate,logout)
 router.get('/profile',authenticate,profile) //primero hacer la autenticacion para saber si esta logeado
 
 
