@@ -33,7 +33,13 @@ const validateCreateTask = [
     .isString()
     .withMessage("El campo tiene que se un string")
     .isLength({ min: 5, max: 50 })
-    .withMessage("El titulo debe tener entre 5 y 50 caracteres"), //~minimo de caracteres y maximo
+    .withMessage("El titulo debe tener entre 5 y 50 caracteres") //~minimo de caracteres y maximo
+    .custom(async (value) => {
+      const validateExistsTask = await Task.findOne({ title: value });
+      if (validateExistsTask) {
+        throw new Error("Ya existe una tarea con ese título");
+      }
+    }),
 
   check("description")
     .notEmpty()
