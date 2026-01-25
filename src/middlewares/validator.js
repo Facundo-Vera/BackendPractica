@@ -1,7 +1,8 @@
 //?check me permite acceder a los campos que quiero validar
 //?los errores se va a ir sumando a un array para mandarlo en la respuesta
 import { check, validationResult } from "express-validator";
-// import Task from "../models/tasks.js";
+import Task from "../models/task.js";
+
 
 //*Funcion que meneja el resultado de las validaciones
 
