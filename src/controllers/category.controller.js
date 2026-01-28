@@ -45,11 +45,24 @@ const actualizarCategoria = async (req,res) => {
 
     const {id} = req.params 
 
-    const {nombre} = req.body
+    // const {nombre} = req.body
+
+
+    const nombre=req.body.nombre.toUpperCase()
+
+    //*Validar nombre
+     const validarNombre = await Categoria.findOne({nombre})
+      
+     if(validarNombre){
+        return res.status(400).json({
+            ok:false,
+            message:"Ya existe una categoria con ese nombre"
+        })
+     }
 
 
     const datos ={
-        nombre:nombre.toUpperCase(),
+        nombre,
         usuario: req.user._id
     }
 
@@ -63,4 +76,15 @@ const actualizarCategoria = async (req,res) => {
 
 }
 
-export{traerCategorias,crearCategoria,actualizarCategoria}
+const eliminarCategoria = async (req,res) =>{
+
+   const {id} = req.params
+   const categoriaBorrada = await Categoria.finByIdAnUpdate(id,{estado:false},{new:true})
+
+   res.status(200).json({
+    message:"Categoria eliminada",
+    categoriaBorrada,
+   })
+}
+
+export{traerCategorias,crearCategoria,actualizarCategoria,eliminarCategoria}

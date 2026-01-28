@@ -1,5 +1,6 @@
 import { check, validationResult } from "express-validator";
 import User from "../models/User.js";
+import Categoria from "../models/Category.js";
 
 //armar una función que maneje el resultado de las validaciones
 const handleValidationErrors = (req, res, next) => {
@@ -26,40 +27,43 @@ const validateEmailNotExists = async (email) => {
   }
 };
 
-
 //^ 1 - Validación de registro
 
- const validateRegisterUser = () => [
+const validateRegisterUser = () => [
   check("username")
-    .notEmpty().withMessage("El campo es obligatorio")
-    .isString().withMessage("El campo tiene que ser un string")
+    .notEmpty()
+    .withMessage("El campo es obligatorio")
+    .isString()
+    .withMessage("El campo tiene que ser un string")
     .isLength({ min: 1, max: 30 })
     .withMessage("El nombre debe tener entre 1 y 30 caracteres")
     .custom(async (value) => {
       const user = await User.findOne({ value });
-      if (user && user.username === value)  {
+      if (user && user.username === value) {
         throw new Error("El usuario ya existe");
       }
     }),
 
   check("email")
-    .notEmpty().withMessage("El campo es obligatorio")
-    .isEmail().withMessage("Ingresá un correo electrónico válido.")
+    .notEmpty()
+    .withMessage("El campo es obligatorio")
+    .isEmail()
+    .withMessage("Ingresá un correo electrónico válido.")
     .custom(validateEmailNotExists),
 
   check("password")
-    .notEmpty().withMessage("La contraseña es obligatoria")
+    .notEmpty()
+    .withMessage("La contraseña es obligatoria")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/)
     .withMessage(
-      "Debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número"
+      "Debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número",
     ),
 
   handleValidationErrors,
 ];
 //^ 2 - Validación de Login
 
-
- const validateLoginUser = () =>  [
+const validateLoginUser = () => [
   check("email")
     .notEmpty()
     .withMessage("El campo es obligatorio")
@@ -83,15 +87,50 @@ const validateEmailNotExists = async (email) => {
 
 //^ 3 - Validación del código de verificación
 
-const validationCodeEmail = () =>  [
+const validationCodeEmail = () => [
   check("verificationCode")
     .notEmpty()
     .withMessage("El código de verificación es obligatorio.")
     .isString()
     .withMessage("El campo tiene que ser un string")
     .isLength({ min: 6, max: 6 })
-    .withMessage("El código de verificación no es válido debe tener 6 caracteres .")
-    
+    .withMessage(
+      "El código de verificación no es válido debe tener 6 caracteres .",
+    ),
 ];
 
-export { handleValidationErrors, validateRegisterUser, validateLoginUser ,validationCodeEmail};
+//Validar ID
+
+const existeCategoriaPorId = async (id) => {
+  const existeCategoria = await Categoria.findById(id);
+
+  if (!existeCategoria) {
+    throw new Eror(`El id ${id} no existe`);
+  }
+  if (!existeCategoria.estado) {
+    throw new Eror(`La categorias ${existeCategoria.nombre} no esta activa`);
+  }
+};
+
+//validar rol Admin
+
+const validarRolAdmin = (req, res, next) => {
+  const rol = req.user.role;
+
+  if (rol !== "admin") {
+    return res.status(401).json({
+      ok: false,
+      message: "No tiene permisos para realizar esta accion ",
+    });
+  }
+  next();
+};
+
+export {
+  handleValidationErrors,
+  validateRegisterUser,
+  validateLoginUser,
+  validationCodeEmail,
+  existeCategoriaPorId,
+  validarRolAdmin,
+};
