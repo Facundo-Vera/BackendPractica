@@ -5,7 +5,7 @@ import {
   crearCategoria,
   eliminarCategoria,
   traerCategorias,
-} from "../controllers/category.controller";
+} from "../controllers/category.controller.js";
 import { authenticate } from "../middlewares/auth.js";
 import { existeCategoriaPorId, handleValidationErrors, validarRolAdmin } from "../middlewares/validator.js";
 

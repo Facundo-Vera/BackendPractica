@@ -1,7 +1,7 @@
 import {Router} from "express";
-import {check} from "express-validator";
+// import {check} from "express-validator";
 import {authenticate} from "../middlewares/auth.js";
-import { actualizarProducto, crearProducto, eliminarProducto, obtenerProductos } from "../controllers/product.controller";
+import { actualizarProducto, crearProducto, eliminarProducto, obtenerProductos } from "../controllers/product.controller.js";
 
 
 const router =Router()

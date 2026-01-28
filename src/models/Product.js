@@ -30,7 +30,7 @@ const ProductoSchema = Schema({
 
     },
     disponible:{
-        typr:Boolean,
+        type:Boolean,
         default:true,
     },
     img:{
