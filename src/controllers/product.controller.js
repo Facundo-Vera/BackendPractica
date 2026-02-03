@@ -61,54 +61,58 @@ const crearProducto = async (req, res) => {
 
 //actualizar producto
 
+const actualizarProducto = async (req, res) => {
+  const { id } = req.params;
 
-const actualizarProducto = async (req,res) => {
+  const { nombre, precio, categoria, descripcion, disponible } = req.body;
+  const usuario = req.user._id;
 
-    const {id} = req.params 
+  const datos = {
+    precio,
+    categoria,
+    descripcion,
+    usuario,
+  };
+  if (req.body.nombre) {
+    data.nombre = req.body.nombre.toUpperCase(); // si el nombre viene lo convierte a mayuscula
+  }
+  const producto = await Producto.finByIdAnUpdate(id, datos, { new: true }); // si mando el producto no ase falta asingnarle una variable
 
-
-    const {nombre,precio,categoria,descripcion}=req.body
-
-
-     const validarNombre = await Producto.findOne({nombre})
-      
-     if(validarNombre){
-        return res.status(400).json({
-            ok:false,
-            message:"Ya existe un Producto con ese nombre"
-        })
-     }
-
-
-    const datos ={
-        nombre,
-       precio,
-       categoria,
-       descripcion
-    }
-
-    const producto = await Producto.finByIdAnUpdate(id,datos,{new:true}) 
-
-    res.status(200).json({
-        message:"Producto actualizado",
-        producto
-    })
-
-
-}
-
+  res.status(200).json({
+    message: "Producto actualizado",
+    producto,
+  });
+};
 
 //borrar producto
-const eliminarProducto = async (req,res) =>{
+const eliminarProducto = async (req, res) => {
+  const { id } = req.params;
 
-   const {id} = req.params
-   const productoBorrado = await Producto.finByIdAnUpdate(id,{estado:false},{new:true})
+  // const productoPorId = await Producto.findById(id)
 
-   res.status(200).json({
-    message:"Producto eliminado",
+  // if(!productoPorId){
+  //   return res.status(400).json({
+  //     ok:false,
+  //     message:"No existe el producto"
+  //   });
+  // }
+
+  const productoBorrado = await Producto.finByIdAnUpdate(
+    id,
+    { estado: false },
+    { new: true },
+  );
+
+  res.status(200).json({
+    ok:true,
+    message: "Producto eliminado",
     productoBorrado,
-   })
-}
+  });
+};
 
-
-export { crearProducto, obtenerProductos,actualizarProducto,eliminarProducto };
+export {
+  crearProducto,
+  obtenerProductos,
+  actualizarProducto,
+  eliminarProducto,
+};

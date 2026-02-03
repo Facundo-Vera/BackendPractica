@@ -4,6 +4,7 @@ import { dbConnect } from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import categoryRoutes from "./routes/category.routes.js"
 import productRoutes from "./routes/product.routes.js"
+import cartRoutes from "./routes/cart.routers.js"
 import cookieParser from "cookie-parser";
 const app = express();
 const PORT = process.env.PORT; //Esta en la manera de acceder a las variables de entorno y setearlas en una variable
@@ -19,6 +20,7 @@ app.use(cookieParser()) // le explico a express que use cookieparser para poder 
 app.use("/api/auth", authRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("api/product",productRoutes)
+app.use("api/cart",cartRoutes)
 
 
 //Conexión Base de datos

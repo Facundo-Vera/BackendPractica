@@ -38,7 +38,7 @@ const validateRegisterUser = () => [
     .isLength({ min: 1, max: 30 })
     .withMessage("El nombre debe tener entre 1 y 30 caracteres")
     .custom(async (value) => {
-      const user = await User.findOne({ username:value });
+      const user = await User.findOne({ username: value });
       if (user && user.username === value) {
         throw new Error("El usuario ya existe");
       }
@@ -59,7 +59,7 @@ const validateRegisterUser = () => [
       "Debe tener mínimo 8 caracteres, una mayúscula, una minúscula y un número",
     ),
 
-   handleValidationErrors, 
+  handleValidationErrors,
 ];
 //^ 2 - Validación de Login
 
@@ -125,6 +125,15 @@ const validarRolAdmin = (req, res, next) => {
   }
   next();
 };
+//Validar producto por id
+
+const ValidarIdProducto = async (id) => {
+  const productoPorId = await Producto.findById(id);
+
+  if (!productoPorId) {
+   throw new Error("No existe el producto")
+  }
+};
 
 export {
   handleValidationErrors,
@@ -133,4 +142,5 @@ export {
   validationCodeEmail,
   existeCategoriaPorId,
   validarRolAdmin,
+  ValidarIdProducto
 };
