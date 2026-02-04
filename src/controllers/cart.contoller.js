@@ -2,8 +2,18 @@ import Cart from "../models/Cart.js";
 import Producto from "../models/Product.js";
 
 //Obtener carrito de usuario
-//Agregar item al carrito
 
+const traerItems = async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ Usuario: req.user._id }).populate(
+      "items.producto",
+    ); //buscamos un carrito con el id de usuarioy si lo encuentra nos trae los datos de los productos
+    res.json(cart || { items: [], total: 0 });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+//Agregar item al carrito
 const agregarItem = async (req, res) => {
   try {
     const { productoId, cantidad } = req.body;
@@ -53,31 +63,96 @@ const agregarItem = async (req, res) => {
       (item) => item.producto.toString() === productoId,
     ); //traigo todo los datos del producto
 
-     //si encontramos el item en el carrito
+    //si encontramos el item en el carrito
     if (itemExiste) {
       itemExiste.cantidad += cantidad;
-    }else{
-        cart.items.push({
-            producto:productoId,
-            cantidad,
-            precioUnitario:producto.precio
-        })
+    } else {
+      cart.items.push({
+        producto: productoId,
+        cantidad,
+        precioUnitario: producto.precio,
+      });
     }
 
-    cart.calcularTotal()
-    await cart.save()
+    cart.calcularTotal();
+    await cart.save();
 
-   const cartPopulate = await cart.populate("items.producto")
+    const cartPopulate = await cart.populate("items.producto");
 
-   res.json(cartPopulate)
-
+    res.json(cartPopulate);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
 //Eliminar item del carrito
+const borrarItem = async (req, res) => {
+  try {
+    const { productoId } = req.params;
+
+    const cart = await Cart.findOne({ Usuario: req.user._id });
+    if (!cart) {
+      return res.status(404).json({ error: "Carrito no encontrado" });
+    }
+
+    cart.items = cart.items.filter(
+      (item) => item.producto.toString !== productoId,
+    ); // nuevo array con los productos menos el que saque
+
+    cart.calcularTotal();
+
+    await cart.save();
+
+    const cartPopulate = await cart.populate("items.producto");
+
+    res.json(cartPopulate);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 //Actualizar cantidad
+
+const actualizarCantidad = async (req, res) => {
+  try {
+    const { productoId } = req.params;
+    const { cantidad } = req.body;
+
+    if (!cantidad || cantidad < 1) {
+      return res.status(400).json({ error: "La cantidad debe ser mayor a 0" });
+    }
+
+    const cart = await Cart.findOne({ usuario: req.user_.id });
+
+    if (!cart) {
+      return res.status(404).json({ error: "Carrito no encontrado" });
+    }
+
+    const item = cart.items.find(
+      (item) => item.producto.toString() === productoId,
+    );
+
+    if (!item) {
+      return res
+        .status(404)
+        .json({ error: "Item no encontrado en el carrito" });
+    }
+
+    item.cantidad = cantidad; //cantidad neuva que viene en el cuerpo
+
+    cart.calcularTotal();
+
+    await cart.save();
+
+    const cartPopulate = await cart.populate("items.producto");
+    res.status(200).json(cartPopulate);
+  } catch (error) {
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+};
+
 //Vaciar carrito
 
-export {agregarItem};
+export { agregarItem, traerItems, borrarItem, actualizarCantidad };

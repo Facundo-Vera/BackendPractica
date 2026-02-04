@@ -46,11 +46,11 @@ const cartSchema = new Schema(
 );
 
 
-cartSchema.method.calcularTotal=()=>{
+cartSchema.method.calcularTotal= function () {
 
-    this.total= this.items.reduce((suma,item)=>suma + item.precioUnitario *item.cantidad,0)
-    return this.total
+    this.total= this.items.reduce((suma,item)=>suma + item.precioUnitario * item.cantidad,0)
+    return this.total;
 
-}
+};
 
 export default model("Cart" ,cartSchema)
