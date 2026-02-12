@@ -42,7 +42,7 @@ const cartSchema = new Schema(
       default: 0,
     },
   },
-  { timestamps: ture },
+  { timestamps: true },
 );
 
 

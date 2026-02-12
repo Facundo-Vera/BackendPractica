@@ -155,4 +155,25 @@ const actualizarCantidad = async (req, res) => {
 
 //Vaciar carrito
 
-export { agregarItem, traerItems, borrarItem, actualizarCantidad };
+const borrarCarrito = async (req,res) =>{
+  try {
+    const  cart = await Cart.findOne({usuario:req.user._id})
+    if(!cart){
+      return res.status(404).json({error:"Carito no encontrado"});
+    }
+    cart.items=[]
+    csrt.total=0
+    await cart.save()
+
+    res.status(200).json8({
+      ok:true,
+      message:"Carrito vacio",
+      cart
+
+    })
+  } catch (error) {
+    res.status(500).json({error:error.message})
+  }
+}
+
+export { agregarItem, traerItems, borrarItem, actualizarCantidad,borrarCarrito };

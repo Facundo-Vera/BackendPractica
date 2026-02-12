@@ -4,7 +4,7 @@ import { dbConnect } from "./config/db.js";
 import authRoutes from "./routes/auth.routes.js";
 import categoryRoutes from "./routes/category.routes.js"
 import productRoutes from "./routes/product.routes.js"
-import cartRoutes from "./routes/cart.routers.js"
+import cartRoutes from "./routes/cart.routes.js"
 import cookieParser from "cookie-parser";
 const app = express();
 const PORT = process.env.PORT; //Esta en la manera de acceder a las variables de entorno y setearlas en una variable
