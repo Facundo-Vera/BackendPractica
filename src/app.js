@@ -1,10 +1,12 @@
 import express from "express";
 import morgan from "morgan";
 import { dbConnect } from "./config/db.js";
+import fileUpload from "express-fileupload"; //Libreria para acceder a files 
 import authRoutes from "./routes/auth.routes.js";
 import categoryRoutes from "./routes/category.routes.js"
 import productRoutes from "./routes/product.routes.js"
 import cartRoutes from "./routes/cart.routes.js"
+import uploadRoutes from "./routes/upload.routes.js"
 import cookieParser from "cookie-parser";
 const app = express();
 const PORT = process.env.PORT; //Esta en la manera de acceder a las variables de entorno y setearlas en una variable
@@ -15,12 +17,15 @@ app.use(express.json()); // explico a mi app que entienda el formato json (parse
 app.use(express.urlencoded({extended:true})) // explicarle a la app que pueda recibir info en formato json de un formulario
 app.use(morgan('dev')); // capturo todos los logs de la app y muestra por consola
 app.use(cookieParser()) // le explico a express que use cookieparser para poder acceder a las cookies 
+app.use(fileUpload()) //puede acceder desde el body a files
+
 
 //Rutas
 app.use("/api/auth", authRoutes);
 app.use("/api/category", categoryRoutes);
 app.use("api/product",productRoutes)
 app.use("api/cart",cartRoutes)
+app.use("api/upload",uploadRoutes)
 
 
 //Conexión Base de datos

@@ -1,6 +1,7 @@
 import { check, validationResult } from "express-validator";
 import User from "../models/User.js";
 import Categoria from "../models/Category.js";
+import Producto from "../models/Product.js";
 
 //armar una función que maneje el resultado de las validaciones
 const handleValidationErrors = (req, res, next) => {
@@ -131,8 +132,38 @@ const ValidarIdProducto = async (id) => {
   const productoPorId = await Producto.findById(id);
 
   if (!productoPorId) {
-   throw new Error("No existe el producto")
+    throw new Error("No existe el producto");
   }
+  if(!producto.disponible){
+    throw new Error("EL producto no esta disponible");
+  }
+ 
+};
+
+//Validar tipo de archivo
+const validateImageFile = (req, res, next) => {
+  if (!req.files || req.files.archivo) {
+    return res.status(400).json({
+      ok: false,
+      message: "No hay  archivo",
+    });
+  }
+
+  let file = req.files.archivo;
+  const formatosValidos = [
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+  ];
+
+  if (!formatosValidos.includes(file.mimetype)) {
+    return res.status(400).json({
+      ok: false,
+      message: "Solo se permiten imagenes (JPG,PNG,GIF,WEBP)",
+    });
+  }
+  next();
 };
 
 export {
@@ -142,5 +173,6 @@ export {
   validationCodeEmail,
   existeCategoriaPorId,
   validarRolAdmin,
-  ValidarIdProducto
+  ValidarIdProducto,
+  validateImageFile,
 };
