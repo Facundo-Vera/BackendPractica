@@ -7,6 +7,7 @@ import categoryRoutes from "./routes/category.routes.js"
 import productRoutes from "./routes/product.routes.js"
 import cartRoutes from "./routes/cart.routes.js"
 import uploadRoutes from "./routes/upload.routes.js"
+import paymenRoutes from "./routes/payment.routes.js"
 import cookieParser from "cookie-parser";
 const app = express();
 const PORT = process.env.PORT; //Esta en la manera de acceder a las variables de entorno y setearlas en una variable
@@ -23,9 +24,10 @@ app.use(fileUpload()) //puede acceder desde el body a files
 //Rutas
 app.use("/api/auth", authRoutes);
 app.use("/api/category", categoryRoutes);
-app.use("api/product",productRoutes)
-app.use("api/cart",cartRoutes)
-app.use("api/upload",uploadRoutes)
+app.use("/api/product",productRoutes)
+app.use("/api/cart",cartRoutes)
+app.use("/api/upload",uploadRoutes)
+app.use("/api/payment",paymenRoutes)
 
 
 //Conexión Base de datos
