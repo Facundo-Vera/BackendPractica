@@ -7,13 +7,17 @@ try {
   };
   const preference = new Preference(client);
 
+   
+  const {titulo,cantidad,precio} = req.body 
+
+
   const referenciaPago = await preference.create({
     body: {
       items: [
         {
-          title: "Mi producto",
-          quantity: 1,
-          unit_price: 200000,
+          title: titulo,
+          quantity: cantidad,
+          unit_price: precio,
         },
       ],
       back_urls: {
