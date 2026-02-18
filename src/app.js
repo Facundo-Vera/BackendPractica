@@ -8,6 +8,7 @@ import productRoutes from "./routes/product.routes.js"
 import cartRoutes from "./routes/cart.routes.js"
 import uploadRoutes from "./routes/upload.routes.js"
 import paymenRoutes from "./routes/payment.routes.js"
+import search from "./routes/search.routes.js"
 import cookieParser from "cookie-parser";
 const app = express();
 const PORT = process.env.PORT; //Esta en la manera de acceder a las variables de entorno y setearlas en una variable
@@ -28,6 +29,7 @@ app.use("/api/product",productRoutes)
 app.use("/api/cart",cartRoutes)
 app.use("/api/upload",uploadRoutes)
 app.use("/api/payment",paymenRoutes)
+app.use("/api/search",search)
 
 
 //Conexión Base de datos
