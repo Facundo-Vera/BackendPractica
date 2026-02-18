@@ -3,17 +3,15 @@ import Producto from "../models/Product.js";
 //*Obtener lista de productos
 
 const obtenerProductos = async (req, res) => {
-  //  const productos = await Producto.find({estado:true})
-  //  .populate("usuario","username email role")
-  //  .populate("categoria","nombre")
-
-  //  const total = await Producto.countDocuments({estado:true})
+  const { limite = 5, desde = 0 } = req.query;
 
   // promesa total
   const [total, productos] = await Promise.all([
     Producto.countDocuments({ estado: true }),
-
+    // me trae todos los productos con el estado en true
     Producto.find({ estado: true })
+      .limit(limite)
+      .skip(desde)
       .populate("usuario", "username email role")
       .populate("categoria", "nombre"),
   ]);
@@ -105,7 +103,7 @@ const eliminarProducto = async (req, res) => {
   );
 
   res.status(200).json({
-    ok:true,
+    ok: true,
     message: "Producto eliminado",
     productoBorrado,
   });

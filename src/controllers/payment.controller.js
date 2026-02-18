@@ -20,12 +20,11 @@ try {
           unit_price: precio,
         },
       ],
-      back_urls: {
+      back_url: {
         success: "https://www.tu-sitio/success",
         failure: "https://www.tu-sitio/failure",
         pending: "https://www.tu-sitio/pending",
       },
-      auto_return: "approved",
     },
   });
 
